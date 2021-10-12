@@ -26,6 +26,7 @@ module Mjml
   @@beautify = true
   @@minify = false
   @@validation_level = "strict"
+  @@local_bin_path = "../node_modules/mjml/bin/mjml"
 
   def self.check_version(bin)
     stdout, _, status = run_mjml('--version', mjml_bin: bin)
@@ -40,6 +41,7 @@ module Mjml
 
   def self.valid_mjml_binary
     @@valid_mjml_binary ||=
+      check_for_local_binary ||
       check_for_custom_mjml_binary ||
       check_for_yarn_mjml_binary ||
       check_for_npm_mjml_binary ||
@@ -48,6 +50,10 @@ module Mjml
     return @@valid_mjml_binary if @@valid_mjml_binary
 
     puts Mjml.mjml_binary_error_string
+  end
+
+  def self.check_for_local_binary
+    return @@local_bin_path if check_version(@@local_bin_path)
   end
 
   def self.check_for_custom_mjml_binary
